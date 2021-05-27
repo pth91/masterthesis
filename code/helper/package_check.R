@@ -8,7 +8,10 @@ packages <- c(
   "janitor",
   "ggpubr",
   "survival",
-  "survminer"
+  "survminer",
+  "writexl",
+  "mice",
+  "muhaz"
 )
 
 ## Now load or install&load all

@@ -1,9 +1,7 @@
 source("../../helper/package_check.R")
 source("../../helper/data.R")
-library("writexl")
-library("survival")
-library('mice')
-library('muhaz')
+source('./estimators.R')
+source('./parametric_gpd.R')
 load_idl_complete()
 
 #-------------------------------------------------------------------------------
@@ -13,11 +11,6 @@ countries <- unique(idl_complete$DCOUNTRY)
 # has to be done to delete the `.` death country
 countries <- countries[nchar(countries) > 1]
 
-# TODO: auf jeden fall muss ich noch irgendwo schreiben, wieso ich gerade diese
-# vier rausggenommmen habe...
-# es gibt nur frauen und davon zu wenige beobachtungen
-# TODO: EW ist das dcountry bei leuten die in UK geboren sind... wofür soll das
-# stehen?
 countries <- countries[
   countries != "ITA" & countries != "LBN" & countries != "FIN" & countries != "SWE"
 ]
@@ -55,46 +48,6 @@ saveRDS(
   unique_observations_france,
   file ="../../../data/RData/unique_observations_france.RData"
 )
-
-mle_estimator <- function(agedays) {
-  tryCatch(
-    {
-      parameters <- fpot(agedays, threshold = min(agedays))
-      return(parameters$param)
-    },
-    error = function(condition) {
-      return(0)
-    }
-  )
-}
-
-endpoint_estimator <- function(threshold, mle_scale, mle_shape) {
-  return(threshold - mle_scale / mle_shape)
-}
-
-einmahl_direct_hazard <- function(mle_shape, est_endpoint, x) {
-  return(1 / (-mle_shape * (est_endpoint - x)))
-}
-
-gpd_hazard <- function(mle_shape, mle_scale, threshold, x) {
-  return(1 / (mle_scale + mle_shape * (x - threshold)))
-}
-
-gpd_cum_hazard <- function(mle_shape, mle_scale, threshold, x) {
-  # return((1/mle_shape) * (log(mle_scale + mle_shape * (x - threshold)) - log(mle_scale - mle_shape * threshold)))
-  return((1 / mle_shape) * (log(mle_scale + mle_shape * (x - threshold)) - log(mle_scale)))
-}
-
-gpd_survival <- function(mle_shape, mle_scale, threshold, x) {
-  return((1 + mle_shape * (x - threshold) / mle_scale)^(-1 / mle_shape))
-}
-
-mean_res_life <- function(mle_shape, mle_scale, threshold, x) {
-  nominator <- -(mle_scale^(1 / mle_shape)) / (mle_shape - 1) * (mle_scale + mle_shape * (x - threshold))^(1 - 1 / mle_shape)
-  denominator <- gpd_survival(mle_shape, mle_scale, threshold, x)
-  return(nominator / denominator)
-}
-
 
 estimators_germany <- data.frame(
   COUNTRY = character(),
@@ -254,169 +207,6 @@ for (death_year in death_years_france) {
   }
 }
 saveRDS(estimators_france,file ="../../../data/RData/estimators_france.RData")
-#ker <- function(x, obs, bw) {
-#  return((1 / sqrt(2 * pi)) * exp(-1 / 2 * ((x - obs) / bw)^2))
-#}
-#khe <- function(bw, nobs, obs, x) {
-#  ret <- 0
-#  for (it in seq(1, nobs)) {
-#    ret <- ret + 1 / (nobs - it + 1) * ker(x, obs[it], bw)
-#  }
-#  return(1 / bw * ret)
-#}
-#opt_bw <- function(bw, ui, obs, nobs) {
-#  first <- 0
-#  for (it in seq(0, length(ui) - 1)) {
-#    first <- (u[it + 1] - u[it]) / 2 * (khe(bw, nobs, obs, u[it])^2 + khe(bw, nobs, obs, u[it + 1])^2)
-#  }
-#  second <- 0
-#  for (iti in seq(0, length(obs))) {
-#    for (itj in seq(0, length(obs))) {
-#      if (iti != itj) {
-#        second <- ker(obs[iti], obs[itj], bw) * (1 / (nobs - iti + 1)) * (1 / (nobs - itj + 1))
-#      }
-#    }
-#  }
-#  g <- first - 2 / bw * second
-#  return(g)
-#}
-#
-## fra <- data_france[which(data_france$DDATE == "2017" & data_france$SEX == "F"),]
-## ad <- sort(fra$AGEDAYS)
-## x <- khe(1, length(ad), ad, min(ad))
-## u <- seq(min(ad), 45809, length.out = 100)
-## f <- optim(1000, opt_bw, ui = u, obs = ad, nobs = length(ad))
-## fra <- data_france[which(data_france$DDATE == "2017" & data_france$SEX == "F"),]
-## ad <- sort(fra$AGEDAYS)
-## x <- khe(1, length(ad), ad, min(ad))
-## u <- seq(min(ad), 45809, length.out = 100)
-## f <- optim(1000, opt_bw, ui = u, obs = ad, nobs = length(ad))
-#fra <- data_france[which(data_france$DDATE == "2017" & data_france$SEX == "F"), ]
-#ad <- sort(fra$AGEDAYS)
-#u <- seq(min(ad), 45809, length.out = 100)
-##f <- optim(1000, opt_bw, ui = u, obs = ad, nobs = length(ad))
-#ger_women <- estimators_germany[which(estimators_germany$SEX == "F" & estimators_germany$DDATE == "2001"), ]
-#ger_thresh_women <- as.numeric(ger_women$THRESHOLD)
-#ger_oldest_women <- as.numeric(ger_women$OLDEST)
-#ger_obs_women <- seq(ger_thresh_women, as.numeric(ger_women$est_endpoint_d) - 365)
-## ger_obs_women <- seq(ger_thresh_women, ger_oldest_women + 365)
-#ger_shape_women <- as.numeric(ger_women$mle_shape)
-#ger_scale_women <- as.numeric(ger_women$mle_scale)
-#ger_haz_women <- gpd_hazard(ger_shape_women, ger_scale_women, ger_thresh_women, ger_obs_women)
-#ger_haz_einmahl_women <- einmahl_direct_hazard(ger_shape_women, as.numeric(ger_women$est_endpoint_d), ger_obs_women)
-#ger_w <- data_germany[which(data_germany$DDATE == "2001" & data_germany$SEX == "F"), ]
-#ad_ger_w <- sort(ger_w$AGEDAYS)
-#u_ger_w <- seq(min(ad_ger_w), as.numeric(ger_women$est_endpoint_d), length.out = 100)
-##f_ger_w <- optim(1000, opt_bw, ui = u_ger_w, obs = ad_ger_w, nobs = length(ad_ger_w))
-##ger_khe_women <- khe(f_ger_w$par, length(ad_ger_w), ad_ger_w, ger_obs_women)
-#ger_mu_women <- muhaz(ad_ger_w[1:(length(ad_ger_w) - 1)], bw.method = "g", min.time = ger_thresh_women, max.time = as.numeric(ger_women$est_endpoint_d) - 365)
-#
-#ger_men <- estimators_germany[which(estimators_germany$SEX == "M" & estimators_germany$DDATE == "2000"), ]
-#ger_thresh_men <- as.numeric(ger_men$THRESHOLD)
-#ger_oldest_men <- as.numeric(ger_men$OLDEST)
-#ger_obs_men <- seq(ger_thresh_men, as.numeric(ger_men$est_endpoint_d) - 365)
-## ger_obs_men <- seq(ger_thresh_men, ger_oldest_men + 365)
-#ger_shape_men <- as.numeric(ger_men$mle_shape)
-#ger_scale_men <- as.numeric(ger_men$mle_scale)
-#ger_haz_men <- gpd_hazard(ger_shape_men, ger_scale_men, ger_thresh_men, ger_obs_men)
-#ger_haz_einmahl_men <- einmahl_direct_hazard(ger_shape_men, as.numeric(ger_men$est_endpoint_d), ger_obs_men)
-#ger_m <- data_germany[which(data_germany$DDATE == "2000" & data_germany$SEX == "M"), ]
-#ad_ger_m <- sort(ger_m$AGEDAYS)
-#u_ger_m <- seq(min(ad_ger_m), as.numeric(ger_men$est_endpoint_d), length.out = 100)
-##f_ger_m <- optim(1000, opt_bw, ui = u_ger_m, obs = ad_ger_m, nobs = length(ad_ger_m))
-##ger_khe_men <- khe(f_ger_m$par, length(ad_ger_m), ad_ger_m, ger_obs_men)
-#ger_mu_men <- muhaz(ad_ger_m,  min.time = ger_thresh_men, max.time = as.numeric(ger_men$est_endpoint_d) - 365)
-#
-#pdf("./code/estimation/plots/hazard_rate_germany.pdf", width=14, height=8.6)
-##png("./code/estimation/plots/hazard_rate_germany.png", width = 8, height = 4.3, units = "in", res=500)
-##par(mfrow = c(1, 2))
-#plot(ger_obs_women, ger_haz_women, main = "German Women, 2001", xlab = "Days Lived", ylab = "Estimated Hazrd Rate", "l")
-#lines(ger_obs_women, ger_haz_einmahl_women, col = "red")
-#lines(ger_mu_women$est.grid, ger_mu_women$haz.est, col = "blue")
-#abline(v = ger_oldest_women, col = 'yellow')
-#abline(v = ad_ger_w[length(ad_ger_w) - 1], col = 'green')
-#abline(v = ad_ger_w[length(ad_ger_w) - 2], col = 'grey')
-##axis(1, at = c(ger_thresh_women, ger_oldest_women))
-#legend("topleft", c("Kernel Estimator", "Direct GPD"), fill = c("blue", "red"))
-##plot(ger_obs_men, ger_haz_men, main = "German Men, 2000", xlab = "Days Lived", ylab = "", "l")
-##lines(ger_obs_men, ger_haz_einmahl_men, col = "red")
-##lines(ger_mu_men$est.grid, ger_mu_men$haz.est, col = "blue")
-##abline(v = ger_oldest_men, col = 'yellow')
-##abline(v = ad_ger_m[length(ad_ger_m) - 1], col = 'green')
-##abline(v = ad_ger_m[length(ad_ger_m) - 2], col = 'grey')
-##legend("bottomright", c("Kernel Estimator", "Direct GPD"), fill = c("blue", "red"))
-##axis(1, at = c(ger_thresh_men, ger_oldest_men))
-#dev.off()
-#
-#fra_women <- estimators_france[which(estimators_france$SEX == "F" & estimators_france$DDATE == "2017"), ]
-#fra_thresh_women <- as.numeric(fra_women$THRESHOLD)
-#fra_oldest_women <- as.numeric(fra_women$OLDEST)
-#fra_obs_women <- seq(fra_thresh_women, as.numeric(fra_women$est_endpoint_d) - 365)
-## fra_obs_women <- seq(fra_thresh_women, fra_oldest_women + 365)
-#fra_shape_women <- as.numeric(fra_women$mle_shape)
-#fra_scale_women <- as.numeric(fra_women$mle_scale)
-#fra_haz_women <- gpd_hazard(fra_shape_women, fra_scale_women, fra_thresh_women, fra_obs_women)
-#fra_mu_women <- muhaz(ad, bw.method = "g", min.time = fra_thresh_women, max.time = as.numeric(fra_women$est_endpoint_d) - 365)
-#fra_haz_einmahl_women <- einmahl_direct_hazard(fra_shape_women, as.numeric(fra_women$est_endpoint_d), fra_obs_women)
-##fra_women_khe <- khe(692, length(ad), ad, fra_obs_women)
-#
-#fra_men <- estimators_france[which(estimators_france$SEX == "M" & estimators_france$DDATE == "2015"), ]
-#fra_thresh_men <- as.numeric(fra_men$THRESHOLD)
-#fra_oldest_men <- as.numeric(fra_men$OLDEST)
-#fra_obs_men <- seq(fra_thresh_men, as.numeric(fra_men$est_endpoint_d) - 365)
-## fra_obs_men <- seq(fra_thresh_men, fra_oldest_men + 365)
-#fra_shape_men <- as.numeric(fra_men$mle_shape)
-#fra_scale_men <- as.numeric(fra_men$mle_scale)
-#fra_haz_men <- gpd_hazard(fra_shape_men, fra_scale_men, fra_thresh_men, fra_obs_men)
-#fra_haz_einmahl_men <- einmahl_direct_hazard(fra_shape_men, as.numeric(fra_men$est_endpoint_d), fra_obs_men)
-#fra_m <- data_france[which(data_france$DDATE == "2015" & data_france$SEX == "M"), ]
-#ad_fra_m <- sort(fra_m$AGEDAYS)
-#u_fra_m <- seq(min(ad_fra_m), as.numeric(fra_men$est_endpoint_d), length.out = 100)
-#fra_mu_men <- muhaz(ad_fra_m, bw.method = "g", min.time = fra_thresh_men, max.time = as.numeric(fra_men$est_endpoint_d) - 365)
-##f_fra_m <- optim(1000, opt_bw, ui = u_fra_m, obs = ad_fra_m, nobs = length(ad_fra_m))
-##fra_khe_men <- khe(f_fra_m$par, length(ad_fra_m), ad_fra_m, fra_obs_men)
-#library("muhaz")
-##png("./code/estimation/plots/hazard_rate_france.png", width = 1920, height =1080)
-#pdf("./code/estimation/plots/hazard_rate_france.pdf", width=14, height=8.6)
-#par(mfrow = c(1, 2))
-#plot(fra_obs_women, fra_haz_women, main = "French Women, 2017", xlab = "Days Lived", ylab = "Estimated Hazard Rate", "l")
-#lines(fra_obs_women, fra_haz_einmahl_women, col = "red")
-##lines(fra_obs_women, fra_women_khe, col = "green")
-#lines(fra_mu_women$est.grid, fra_mu_women$haz.est, col = "blue")
-#abline(v = fra_oldest_women, col = 'yellow')
-#abline(v = ad[length(ad) - 1], col = 'green')
-#abline(v = ad[length(ad) - 2], col = 'grey')
-#legend("topleft", c("Kernel Estimator", "Direct GPD"), fill = c("blue", "red"))
-##axis(1, at = c(fra_thresh_women, fra_oldest_women))
-#plot(fra_obs_men, fra_haz_men, main = "French Men, 2015", xlab = "Days Lived", ylab = "", "l")
-#lines(fra_obs_men, fra_haz_einmahl_men, col = "red")
-#lines(fra_mu_men$est.grid, fra_mu_men$haz.est, col = "blue")
-##lines(fra_obs_men, fra_khe_men, col = "green")
-#abline(v = fra_oldest_men, col = 'yellow')
-#abline(v = ad_fra_m[length(ad_fra_m) - 1], col = 'green')
-#abline(v = ad_fra_m[length(ad_fra_m) - 2], col = 'grey')
-#legend("topleft", c("Kernel Estimator", "Direct GPD"), fill = c("blue", "red"))
-##axis(1, at = c(fra_thresh_men, fra_oldest_men))
-#dev.off()
-#
-##png("./code/estimation/plots/kaplan-meier-survival_germany.png", width = 8, height = 4.3, units = "in", res=500)
-#pdf("./code/estimation/plots/kaplan-meier-survival_germany.pdf", width =14 , height = 8.6)
-#par(mfrow = c(1, 2))
-#ger_agedays_women <- as.numeric(sort(data_germany[which(data_germany$DDATE == "2001" & data_germany$SEX == "F"), ]$AGEDAYS))
-#ger_surv_women <- gpd_survival(ger_shape_women, ger_scale_women, ger_thresh_women, ger_agedays_women)
-#ger_km_women <- survfit(Surv(ger_agedays_women) ~ 1)
-#plot(ger_km_women, xlim = c(min(ger_agedays_women), max(ger_agedays_women)), main = "German Women, 2001", xlab = "Days Lived", ylab = "Estimated Survival Function", col = "blue")
-#lines(ger_agedays_women, ger_surv_women, col = "red")
-##axis(1, at = c(min(ger_agedays_women), max(ger_agedays_women)))
-#legend("topright", c("Kaplan-Meier", "Direct GPD"), fill = c("blue", "red"))
-#ger_agedays_men <- as.numeric(sort(data_germany[which(data_germany$DDATE == "2000" & data_germany$SEX == "M"), ]$AGEDAYS))
-#ger_surv_men <- gpd_survival(ger_shape_men, ger_scale_men, ger_thresh_men, ger_agedays_men)
-#ger_km_men <- survfit(Surv(ger_agedays_men) ~ 1)
-#plot(ger_km_men, xlim = c(min(ger_agedays_men), max(ger_agedays_men)), main = "German Men, 2000", xlab = "Days Lived", ylab = "", col = "blue")
-#lines(ger_agedays_men, ger_surv_men, col = "red")
-##axis(1, at = c(min(ger_agedays_men), max(ger_agedays_men)))
-#legend("topright", c("Kaplan-Meier", "Direct GPD"), fill = c("blue", "red"))
-#dev.off()
 ##plot_na_germany <- ggplot(
 ##  NULL,
 ##  aes(x, y),

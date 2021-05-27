@@ -1,5 +1,5 @@
-source("./code/package_check.R")
-source("./code/data/data.R")
+source("../../helper/package_check.R")
+source("../../helper/data.R")
 load_idl_complete()
 
 #-------------------------------------------------------------------------------
@@ -45,19 +45,10 @@ opt_bw <- function(bw, ui, obs, nobs){
     for(iti in seq(0, length(obs))){
         for(itj in seq(0, length(obs))){
             if(iti != itj){
-                #print('case')
-                #print(obs[iti])
-                #print(obs[itj])
-                #print(ker(obs[iti], obs[itj], bw))
                 second <- ker(obs[iti], obs[itj], bw) * (1/(nobs - iti + 1)) * (1/(nobs - itj + 1))
             }
-            #else{
-            #    second <- second
-            #}
         }
     }
-    #print(first)
-    #print(second)
     g <- first -2/bw * second
     return(g)
 }
