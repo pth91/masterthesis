@@ -1,0 +1,6 @@
+source("../../helper/package_check.R")
+source("./tex_plot_reverse_weibull.R", encoding = "UTF-8")
+source("./tex_plot_frechet.R", encoding = "UTF-8")
+source("./tex_plot_gpd.R", encoding = "UTF-8")
+source("./tex_plot_gev.R", encoding = "UTF-8")
+source("./tex_plot_gumbel.R", encoding = "UTF-8")
