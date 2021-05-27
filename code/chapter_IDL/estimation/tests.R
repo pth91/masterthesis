@@ -43,13 +43,11 @@ ger_neg_test_women <- negative_index(ger_shape_women, ger_women_nobs)
 ger_finite_endp_women <- finite_endpoint(ger_shape_women, ger_scale_women, ger_women_est_endpoint, ger_women_nobs)
 ger_men_nobs <- as.numeric(ger_men$N_OBSERVATIONS)
 ger_neg_test_men <- negative_index(ger_shape_men, ger_men_nobs)
-ger_finite_endp_men <- finite_endpoint(ger_shape_men, ger_scale_men, ger_men_est_endpoint, ger_women_nobs)
+ger_finite_endp_men <- finite_endpoint(ger_shape_men, ger_scale_men, ger_men_est_endpoint, ger_men_nobs)
 
 fra_women_nobs <- as.numeric(fra_women$N_OBSERVATIONS)
 fra_neg_test_women <- negative_index(fra_shape_women, fra_women_nobs)
 fra_finite_endp_women <- finite_endpoint(fra_shape_women, fra_scale_women, fra_women_est_endpoint, fra_women_nobs)
-fra_men_nobs <- as.numeric(fra_est_men$N_OBSERVATIONS)
-fra_neg_test_men <- negative_index(fra_men_mle_shape, fra_men_nobs)
+fra_men_nobs <- as.numeric(fra_men$N_OBSERVATIONS)
+fra_neg_test_men <- negative_index(fra_shape_men, fra_men_nobs)
 fra_finite_endp_men <- finite_endpoint(fra_shape_men, fra_scale_men, fra_men_est_endpoint, fra_men_nobs)
-
-

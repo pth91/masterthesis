@@ -32,7 +32,7 @@ ger_women_data <- data.frame(data = ger_agedays_women, time = ger_agedays_women)
 ger_women_data$status <- 1
 ger_women_na <- nelsonaalen(data = ger_women_data, timevar = time, statusvar = status)
 ger_women_gh <- gpd_cum_hazard(ger_shape_women, ger_scale_women, ger_thresh_women, ger_agedays_women)
-ger_women_est_endpoint <- ger_women$est_endpoint_d
+ger_women_est_endpoint <- as.numeric(ger_women$est_endpoint_d)
 
 ger_men <- estimators_germany[which(estimators_germany$SEX == "M" & estimators_germany$DDATE == "2000"), ]
 ger_thresh_men <- as.numeric(ger_men$THRESHOLD)
@@ -53,7 +53,7 @@ ger_men_data <- data.frame(data = ger_agedays_men, time = ger_agedays_men)
 ger_men_data$status <- 1
 ger_men_na <- nelsonaalen(data = ger_men_data, timevar = time, statusvar = status)
 ger_men_gh <- gpd_cum_hazard(ger_shape_men, ger_scale_men, ger_thresh_men, ger_agedays_men)
-ger_men_est_endpoint <- ger_men$est_endpoint_d
+ger_men_est_endpoint <- as.numeric(ger_men$est_endpoint_d)
 
 fra_women <- estimators_france[which(estimators_france$SEX == "F" & estimators_france$DDATE == "2017"), ]
 fra_thresh_women <- as.numeric(fra_women$THRESHOLD)
@@ -80,7 +80,7 @@ fra_women_data <- data.frame(data = fra_agedays_women, time = fra_agedays_women)
 fra_women_data$status <- 1
 fra_women_na <- nelsonaalen(data = fra_women_data, timevar = time, statusvar = status)
 fra_women_gh <- gpd_cum_hazard(fra_shape_women, fra_scale_women, fra_thresh_women, fra_agedays_women)
-fra_women_est_endpoint <- fra_women$est_endpoint_d
+fra_women_est_endpoint <- as.numeric(fra_women$est_endpoint_d)
 
 fra_men <- estimators_france[which(estimators_france$SEX == "M" & estimators_france$DDATE == "2015"), ]
 fra_thresh_men <- as.numeric(fra_men$THRESHOLD)
@@ -97,7 +97,7 @@ fra_scale_men <- as.numeric(fra_men$mle_scale)
 fra_agedays_men <- as.numeric(sort(data_france[which(data_france$DDATE == "2015" & data_france$SEX == "M"), ]$AGEDAYS))
 fra_surv_men <- gpd_survival(fra_shape_men, fra_scale_men, fra_thresh_men, fra_agedays_men)
 fra_km_men <- survfit(Surv(fra_agedays_men) ~ 1)
-fra_men_est_endpoint <- fra_men$est_endpoint_d
+fra_men_est_endpoint <- as.numeric(fra_men$est_endpoint_d)
 
 fra_haz_men <- gpd_hazard(fra_shape_men, fra_scale_men, fra_thresh_men, fra_obs_men)
 fra_haz_einmahl_men <- einmahl_direct_hazard(fra_shape_men, as.numeric(fra_men$est_endpoint_d), fra_obs_men)
