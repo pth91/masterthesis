@@ -1,7 +1,7 @@
 # TODO: man hat hier als land auch immernoch den `.`, das sollte man auf jeden
 # fall nochmal erwaehnen
-source("./code/package_check.R")
-source("./code/data/data.R")
+source("../../helper/package_check.R")
+source("../../helper/data.R")
 load_idl_complete()
 
 library(ggplot2)
@@ -61,7 +61,7 @@ plot_obs_by_dcountry_sex <- annotate_figure(
 )
 
 ggsave(
-  "plots/tex_observations/obs_by_dcountry_sex.png",
+  "./figures/obs_by_dcountry_sex.png",
   plot = plot_obs_by_dcountry_sex,
   width = 7,
   height = 4.3
