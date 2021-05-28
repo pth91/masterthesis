@@ -1,12 +1,16 @@
 source("../../helper/package_check.R")
 source("../../helper/data.R")
-source('./estimators.R')
-source('./parametric_gpd.R')
-source('./necessary_variables.R')
+source("./estimators.R")
+source("./parametric_gpd.R")
+source("./necessary_variables.R")
 
-estimators_german_women <- estimators_germany[which(estimators_germany$SEX == "F"),]
+estimators_german_women <- estimators_germany[
+  which(estimators_germany$SEX == "F"),
+]
 estimators_german_women <- estimators_german_women %>% drop_na()
-estimators_german_men <- estimators_germany[which(estimators_germany$SEX == "M"),]
+estimators_german_men <- estimators_germany[
+  which(estimators_germany$SEX == "M"),
+]
 estimators_german_men <- estimators_german_men %>% drop_na()
 
 df_mle_women <- data.frame(
@@ -23,32 +27,35 @@ plot_mle_ger <- ggplot(
   aes(x, y),
   colour = y
 ) +
-geom_line(data = df_mle_women, aes(x, y, colour = "Women")) +
-geom_line(data = df_mle_men, aes(x, y, colour = "Men")) +
-geom_hline(yintercept = -0.5, col = "orange") +
-labs(
-  x = "Year of Death",
-  y = unname(TeX("$\\hat{\\gamma}"))
-) +
-scale_color_manual(
-  name = c('Women', 'Men'),
-  values=c(Women = "red",
-  Men = "blue"))+
-theme(
-  legend.position = c(0.15, 0.15),
-  legend.key.size = unit(0.5, "cm"),
-  legend.key.height = unit(0.5, "cm"),
-  legend.key.width = unit(0.5, "cm"),
-  legend.title = element_blank(),
-  plot.title = element_text(hjust = 0.5),
-  plot.subtitle = element_text(hjust = 0.5),
-  # panel.border = element_blank(),
-  panel.grid.major = element_line(color = "grey"),
-  # panel.grid.minor = element_blank(),
-  panel.background = element_blank(),
-  axis.line = element_line(color = "black"),
-  legend.text.align = 0
-)
+  geom_line(data = df_mle_women, aes(x, y, colour = "Women")) +
+  geom_line(data = df_mle_men, aes(x, y, colour = "Men")) +
+  geom_hline(yintercept = -0.5, col = "orange") +
+  labs(
+    x = "Year of Death",
+    y = unname(TeX("$\\hat{\\gamma}"))
+  ) +
+  scale_color_manual(
+    name = c("Women", "Men"),
+    values = c(
+      Women = "red",
+      Men = "blue"
+    )
+  ) +
+  theme(
+    legend.position = c(0.15, 0.15),
+    legend.key.size = unit(0.5, "cm"),
+    legend.key.height = unit(0.5, "cm"),
+    legend.key.width = unit(0.5, "cm"),
+    legend.title = element_blank(),
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5),
+    # panel.border = element_blank(),
+    panel.grid.major = element_line(color = "grey"),
+    # panel.grid.minor = element_blank(),
+    panel.background = element_blank(),
+    axis.line = element_line(color = "black"),
+    legend.text.align = 0
+  )
 
 ggsave(
   "./figures/neg_evi/mle_shape_germany.png",
@@ -57,9 +64,13 @@ ggsave(
   height = 4.3
 )
 
-estimators_france_women <- estimators_france[which(estimators_france$SEX == "F"),]
+estimators_france_women <- estimators_france[
+  which(estimators_france$SEX == "F"),
+]
 estimators_france_women <- estimators_france_women %>% drop_na()
-estimators_france_men <- estimators_france[which(estimators_france$SEX == "M"),]
+estimators_france_men <- estimators_france[
+  which(estimators_france$SEX == "M"),
+]
 estimators_france_men <- estimators_france_men %>% drop_na()
 
 df_mle_women <- data.frame(
@@ -77,32 +88,32 @@ plot_mle_france <- ggplot(
   aes(x, y),
   colour = y
 ) +
-geom_line(data = df_mle_women, aes(x, y, colour = "Women")) +
-geom_line(data = df_mle_men, aes(x, y, colour = "Men")) +
-geom_hline(yintercept = -0.5, col = "orange") +
-labs(
-  x = "Year of Death",
-  y = unname(TeX("$\\hat{\\gamma}"))
-) +
-scale_color_manual(
-  name = c('Women', 'Men'),
-  values=c(Women = "red",Men = "blue")
-)+
-theme(
-  legend.position = c(0.15, 0.15),
-  legend.key.size = unit(0.5, "cm"),
-  legend.key.height = unit(0.5, "cm"),
-  legend.key.width = unit(0.5, "cm"),
-  legend.title = element_blank(),
-  plot.title = element_text(hjust = 0.5),
-  plot.subtitle = element_text(hjust = 0.5),
-  # panel.border = element_blank(),
-  panel.grid.major = element_line(color = "grey"),
-  # panel.grid.minor = element_blank(),
-  panel.background = element_blank(),
-  axis.line = element_line(color = "black"),
-  legend.text.align = 0
-)
+  geom_line(data = df_mle_women, aes(x, y, colour = "Women")) +
+  geom_line(data = df_mle_men, aes(x, y, colour = "Men")) +
+  geom_hline(yintercept = -0.5, col = "orange") +
+  labs(
+    x = "Year of Death",
+    y = unname(TeX("$\\hat{\\gamma}"))
+  ) +
+  scale_color_manual(
+    name = c("Women", "Men"),
+    values = c(Women = "red", Men = "blue")
+  ) +
+  theme(
+    legend.position = c(0.15, 0.15),
+    legend.key.size = unit(0.5, "cm"),
+    legend.key.height = unit(0.5, "cm"),
+    legend.key.width = unit(0.5, "cm"),
+    legend.title = element_blank(),
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5),
+    # panel.border = element_blank(),
+    panel.grid.major = element_line(color = "grey"),
+    # panel.grid.minor = element_blank(),
+    panel.background = element_blank(),
+    axis.line = element_line(color = "black"),
+    legend.text.align = 0
+  )
 
 ggsave(
   "./figures/neg_evi/mle_shape_france.png",
@@ -110,4 +121,3 @@ ggsave(
   width = 7,
   height = 4.3
 )
-

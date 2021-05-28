@@ -1,7 +1,7 @@
 source("../../helper/package_check.R")
 source("../../helper/data.R")
-source('./estimators.R')
-source('./parametric_gpd.R')
+source("./estimators.R")
+source("./parametric_gpd.R")
 load_idl_complete()
 
 #-------------------------------------------------------------------------------
@@ -12,7 +12,10 @@ countries <- unique(idl_complete$DCOUNTRY)
 countries <- countries[nchar(countries) > 1]
 
 countries <- countries[
-  countries != "ITA" & countries != "LBN" & countries != "FIN" & countries != "SWE"
+  countries != "ITA" &
+    countries != "LBN" &
+    countries != "FIN" &
+    countries != "SWE"
 ]
 
 #-------------------------------------------------------------------------------
@@ -33,7 +36,7 @@ unique_observations_germany <- {
     arrange(desc(observations))
 }
 saveRDS(
-  unique_observations_germany, 
+  unique_observations_germany,
   file = "../../../data/RData/unique_observations_germany.RData"
 )
 write_xlsx(
@@ -41,15 +44,15 @@ write_xlsx(
   "./tables/unique_observations_germany.xlsx"
 )
 
- unique_observations_france <- {
+unique_observations_france <- {
   data_france %>%
     group_by(DDATE, SEX) %>%
     summarize("observations" = n()) %>%
     arrange(desc(observations))
- }
+}
 saveRDS(
   unique_observations_france,
-  file ="../../../data/RData/unique_observations_france.RData"
+  file = "../../../data/RData/unique_observations_france.RData"
 )
 write_xlsx(
   unique_observations_france,
@@ -102,16 +105,36 @@ for (death_year in death_years_germany) {
         est_endpoint_d - 1
       )
       direct_hazard <- einmahl_direct_hazard(mle_shape, est_endpoint_d, t)
-      mean_residual_life_d <- mean_res_life(mle_shape, mle_scale, threshold, threshold)
+      mean_residual_life_d <- mean_res_life(
+        mle_shape,
+        mle_scale,
+        threshold,
+        threshold
+      )
       mean_residual_life_Y <- mean_residual_life_d / 365
-      estimators_germany[nrow(estimators_germany) + 1, ] <- c("GER", death_year, observations, "F", threshold, oldest, mle_scale, mle_shape, est_endpoint_d, est_endpoint_Y, direct_hazard[1], direct_hazard[2], direct_hazard[3], direct_hazard[4], direct_hazard[5], mean_residual_life_d, mean_residual_life_Y)
+      estimators_germany[nrow(estimators_germany) + 1, ] <-
+        c(
+          "GER", death_year, observations, "F", threshold, oldest,
+          mle_scale, mle_shape, est_endpoint_d, est_endpoint_Y,
+          direct_hazard[1], direct_hazard[2], direct_hazard[3],
+          direct_hazard[4], direct_hazard[5],
+          mean_residual_life_d, mean_residual_life_Y
+        )
     }
     else {
-      estimators_germany[nrow(estimators_germany) + 1, ] <- c("GER", death_year, observations, "F", threshold, oldest, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
+      estimators_germany[nrow(estimators_germany) + 1, ] <-
+        c(
+          "GER", death_year, observations, "F", threshold, oldest,
+          NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+        )
     }
   }
   else {
-    estimators_germany[nrow(estimators_germany) + 1, ] <- c("GER", death_year, observations, "F", threshold, oldest, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
+    estimators_germany[nrow(estimators_germany) + 1, ] <-
+      c(
+        "GER", death_year, observations, "F", threshold, oldest,
+        NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+      )
   }
 
   if (length(men_agedays) > 1) {
@@ -124,18 +147,44 @@ for (death_year in death_years_germany) {
       mle_shape <- estimators_men[2]
       est_endpoint_d <- endpoint_estimator(threshold, mle_scale, mle_shape)
       est_endpoint_Y <- est_endpoint_d / 365
-      t <- c(est_endpoint_d - 365, est_endpoint_d - 273, est_endpoint_d - 181, est_endpoint_d - 90, est_endpoint_d - 1)
+      t <- c(
+        est_endpoint_d - 365,
+        est_endpoint_d - 273,
+        est_endpoint_d - 181,
+        est_endpoint_d - 90,
+        est_endpoint_d - 1
+      )
       direct_hazard <- einmahl_direct_hazard(mle_shape, est_endpoint_d, t)
-      mean_residual_life_d <- mean_res_life(mle_shape, mle_scale, threshold, threshold)
+      mean_residual_life_d <- mean_res_life(
+        mle_shape,
+        mle_scale,
+        threshold,
+        threshold
+      )
       mean_residual_life_Y <- mean_residual_life_d / 365
-      estimators_germany[nrow(estimators_germany) + 1, ] <- c("GER", death_year, observations, "M", threshold, oldest, mle_scale, mle_shape, est_endpoint_d, est_endpoint_Y, direct_hazard[1], direct_hazard[2], direct_hazard[3], direct_hazard[4], direct_hazard[5], mean_residual_life_d, mean_residual_life_Y)
+      estimators_germany[nrow(estimators_germany) + 1, ] <-
+        c(
+          "GER", death_year, observations, "M", threshold, oldest,
+          mle_scale, mle_shape, est_endpoint_d, est_endpoint_Y,
+          direct_hazard[1], direct_hazard[2], direct_hazard[3],
+          direct_hazard[4], direct_hazard[5],
+          mean_residual_life_d, mean_residual_life_Y
+        )
     }
     else {
-      estimators_germany[nrow(estimators_germany) + 1, ] <- c("GER", death_year, observations, "M", threshold, oldest, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
+      estimators_germany[nrow(estimators_germany) + 1, ] <-
+        c(
+          "GER", death_year, observations, "M", threshold, oldest,
+          NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+        )
     }
   }
   else {
-    estimators_germany[nrow(estimators_germany) + 1, ] <- c("GER", death_year, observations, "M", threshold, oldest, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
+    estimators_germany[nrow(estimators_germany) + 1, ] <-
+      c(
+        "GER", death_year, observations, "M", threshold, oldest,
+        NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+      )
   }
 }
 saveRDS(
@@ -186,18 +235,44 @@ for (death_year in death_years_france) {
       mle_shape <- as.numeric(estimators_women[2])
       est_endpoint_d <- endpoint_estimator(threshold, mle_scale, mle_shape)
       est_endpoint_Y <- est_endpoint_d / 365
-      t <- c(est_endpoint_d - 365, est_endpoint_d - 273, est_endpoint_d - 181, est_endpoint_d - 90, est_endpoint_d - 1)
+      t <- c(
+        est_endpoint_d - 365,
+        est_endpoint_d - 273,
+        est_endpoint_d - 181,
+        est_endpoint_d - 90,
+        est_endpoint_d - 1
+      )
       direct_hazard <- einmahl_direct_hazard(mle_shape, est_endpoint_d, t)
-      mean_residual_life_d <- mean_res_life(mle_shape, mle_scale, threshold, threshold)
+      mean_residual_life_d <- mean_res_life(
+        mle_shape,
+        mle_scale,
+        threshold,
+        threshold
+      )
       mean_residual_life_Y <- mean_residual_life_d / 365
-      estimators_france[nrow(estimators_france) + 1, ] <- c("FRA", death_year, observations, "F", threshold, oldest, mle_scale, mle_shape, est_endpoint_d, est_endpoint_Y, direct_hazard[1], direct_hazard[2], direct_hazard[3], direct_hazard[4], direct_hazard[5], mean_residual_life_d, mean_residual_life_Y)
+      estimators_france[nrow(estimators_france) + 1, ] <-
+        c(
+          "FRA", death_year, observations, "F", threshold, oldest,
+          mle_scale, mle_shape, est_endpoint_d, est_endpoint_Y,
+          direct_hazard[1], direct_hazard[2], direct_hazard[3],
+          direct_hazard[4], direct_hazard[5],
+          mean_residual_life_d, mean_residual_life_Y
+        )
     }
     else {
-      estimators_france[nrow(estimators_france) + 1, ] <- c("FRA", death_year, observations, "F", threshold, oldest, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
+      estimators_france[nrow(estimators_france) + 1, ] <-
+        c(
+          "FRA", death_year, observations, "F", threshold, oldest,
+          NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+        )
     }
   }
   else {
-    estimators_france[nrow(estimators_france) + 1, ] <- c("FRA", death_year, observations, "F", threshold, oldest, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
+    estimators_france[nrow(estimators_france) + 1, ] <-
+      c(
+        "FRA", death_year, observations, "F", threshold, oldest,
+        NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+      )
   }
 
   if (length(men_agedays) > 1) {
@@ -210,21 +285,47 @@ for (death_year in death_years_france) {
       mle_shape <- estimators_men[2]
       est_endpoint_d <- endpoint_estimator(threshold, mle_scale, mle_shape)
       est_endpoint_Y <- est_endpoint_d / 365
-      t <- c(est_endpoint_d - 365, est_endpoint_d - 273, est_endpoint_d - 181, est_endpoint_d - 90, est_endpoint_d - 1)
+      t <- c(
+        est_endpoint_d - 365,
+        est_endpoint_d - 273,
+        est_endpoint_d - 181,
+        est_endpoint_d - 90,
+        est_endpoint_d - 1
+      )
       direct_hazard <- einmahl_direct_hazard(mle_shape, est_endpoint_d, t)
-      mean_residual_life_d <- mean_res_life(mle_shape, mle_scale, threshold, threshold)
+      mean_residual_life_d <- mean_res_life(
+        mle_shape,
+        mle_scale,
+        threshold,
+        threshold
+      )
       mean_residual_life_Y <- mean_residual_life_d / 365
-      estimators_france[nrow(estimators_france) + 1, ] <- c("FRA", death_year, observations, "M", threshold, oldest, mle_scale, mle_shape, est_endpoint_d, est_endpoint_Y, direct_hazard[1], direct_hazard[2], direct_hazard[3], direct_hazard[4], direct_hazard[5], mean_residual_life_d, mean_residual_life_Y)
+      estimators_france[nrow(estimators_france) + 1, ] <-
+        c(
+          "FRA", death_year, observations, "M", threshold, oldest,
+          mle_scale, mle_shape, est_endpoint_d, est_endpoint_Y,
+          direct_hazard[1], direct_hazard[2], direct_hazard[3],
+          direct_hazard[4], direct_hazard[5],
+          mean_residual_life_d, mean_residual_life_Y
+        )
     }
     else {
-      estimators_france[nrow(estimators_france) + 1, ] <- c("FRA", death_year, observations, "M", threshold, oldest, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
+      estimators_france[nrow(estimators_france) + 1, ] <-
+        c(
+          "FRA", death_year, observations, "M", threshold, oldest,
+          NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+        )
     }
   }
   else {
-    estimators_france[nrow(estimators_france) + 1, ] <- c("FRA", death_year, observations, "M", threshold, oldest, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
+    estimators_france[nrow(estimators_france) + 1, ] <-
+      c(
+        "FRA", death_year, observations, "M", threshold, oldest,
+        NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+      )
   }
 }
-saveRDS(estimators_france,file ="../../../data/RData/estimators_france.RData")
+saveRDS(estimators_france, file = "../../../data/RData/estimators_france.RData")
 write_xlsx(
   estimators_france,
   "./tables/estimators_france.xlsx"
