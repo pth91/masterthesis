@@ -4,7 +4,7 @@ source('./estimators.R')
 source('./parametric_gpd.R')
 source('./necessary_variables.R')
 
-pdf("./plots/nelson_aalen/nelson-aalen_germany.pdf", width = 14, height = 8.6)
+pdf("./figures/nelson_aalen/nelson-aalen_germany.pdf", width = 14, height = 8.6)
 par(mfrow = c(1, 2))
 plot(ger_agedays_women, ger_women_na, "l", ylim = range(ger_women_na, ger_women_gh), main = "German Women, 2001", xlab = "Days Lived", ylab = "Estimated Cumulated Hazard Rate", col = "blue")
 lines(x = ger_agedays_women, y = ger_women_gh, col = "red")
@@ -18,7 +18,7 @@ dev.off()
 
 
 
-pdf("./plots/nelson_aalen/nelson-aalen_france.pdf", width = 14, height = 8.6)
+pdf("./figures/nelson_aalen/nelson-aalen_france.pdf", width = 14, height = 8.6)
 par(mfrow = c(1, 2))
 plot(fra_agedays_women, fra_women_na, "l", ylim = range(fra_women_na, fra_women_gh), main = "French Women, 2017", xlab = "Days Lived", ylab = "Estimated Cumulated Hazard Rate", col = "blue")
 lines(x = fra_agedays_women, y = fra_women_gh, col = "red")

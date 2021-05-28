@@ -4,6 +4,11 @@ source('./estimators.R')
 source('./parametric_gpd.R')
 source('./necessary_variables.R')
 
+estimators_german_women <- estimators_germany[which(estimators_germany$SEX == "F"),]
+estimators_german_women <- estimators_german_women %>% drop_na()
+estimators_german_men <- estimators_germany[which(estimators_germany$SEX == "M"),]
+estimators_german_men <- estimators_german_men %>% drop_na()
+
 df_mle_women <- data.frame(
   x = as.numeric(estimators_german_women$DDATE),
   y = as.numeric(estimators_german_women$mle_shape)
@@ -25,7 +30,10 @@ labs(
   x = "Year of Death",
   y = unname(TeX("$\\hat{\\gamma}"))
 ) +
-scale_color_manual(name = c('Women', 'Men'), values=c(Women = "red", Men = "blue"))+
+scale_color_manual(
+  name = c('Women', 'Men'),
+  values=c(Women = "red",
+  Men = "blue"))+
 theme(
   legend.position = c(0.15, 0.15),
   legend.key.size = unit(0.5, "cm"),
@@ -43,11 +51,16 @@ theme(
 )
 
 ggsave(
-  "./plots/neg_evi/mle_shape_germany.png",
+  "./figures/neg_evi/mle_shape_germany.png",
   plot = plot_mle_ger,
   width = 7,
   height = 4.3
 )
+
+estimators_france_women <- estimators_france[which(estimators_france$SEX == "F"),]
+estimators_france_women <- estimators_france_women %>% drop_na()
+estimators_france_men <- estimators_france[which(estimators_france$SEX == "M"),]
+estimators_france_men <- estimators_france_men %>% drop_na()
 
 df_mle_women <- data.frame(
   x = as.numeric(estimators_france_women$DDATE),
@@ -57,6 +70,7 @@ df_mle_men <- data.frame(
   x = as.numeric(estimators_france_men$DDATE),
   y = as.numeric(estimators_france_men$mle_shape)
 )
+
 
 plot_mle_france <- ggplot(
   NULL,
@@ -70,7 +84,10 @@ labs(
   x = "Year of Death",
   y = unname(TeX("$\\hat{\\gamma}"))
 ) +
-scale_color_manual(name = c('Women', 'Men'), values=c(Women = "red", Men = "blue"))+
+scale_color_manual(
+  name = c('Women', 'Men'),
+  values=c(Women = "red",Men = "blue")
+)+
 theme(
   legend.position = c(0.15, 0.15),
   legend.key.size = unit(0.5, "cm"),
@@ -88,7 +105,7 @@ theme(
 )
 
 ggsave(
-  "./plots/neg_evi/mle_shape_france.png",
+  "./figures/neg_evi/mle_shape_france.png",
   plot = plot_mle_france,
   width = 7,
   height = 4.3

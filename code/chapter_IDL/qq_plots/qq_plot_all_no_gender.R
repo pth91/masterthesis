@@ -1,3 +1,7 @@
+# This plots the QQ-plots of the theoretical gpd quantiles with maximum likelihood
+# estimators against the empirical quantiles. Per country, not differentiating
+# between genders or year of death. Thus usability of these plots is minor.
+
 source("../../helper/package_check.R")
 source("../../helper/data.R")
 load_idl_complete()
