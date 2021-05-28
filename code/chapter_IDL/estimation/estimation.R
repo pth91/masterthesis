@@ -36,7 +36,10 @@ saveRDS(
   unique_observations_germany, 
   file = "../../../data/RData/unique_observations_germany.RData"
 )
-
+write_xlsx(
+  unique_observations_germany,
+  "./tables/unique_observations_germany.xlsx"
+)
 
  unique_observations_france <- {
   data_france %>%
@@ -47,6 +50,10 @@ saveRDS(
 saveRDS(
   unique_observations_france,
   file ="../../../data/RData/unique_observations_france.RData"
+)
+write_xlsx(
+  unique_observations_france,
+  "./tables/unique_observations_france.xlsx"
 )
 
 estimators_germany <- data.frame(
@@ -129,6 +136,11 @@ saveRDS(
   estimators_germany,
   file = "../../../data/RData/estimators_germany.RData"
 )
+write_xlsx(
+  estimators_germany,
+  "./tables/estimators_germany.xlsx"
+)
+
 
 estimators_france <- data.frame(
   COUNTRY = character(),
@@ -207,3 +219,7 @@ for (death_year in death_years_france) {
   }
 }
 saveRDS(estimators_france,file ="../../../data/RData/estimators_france.RData")
+write_xlsx(
+  estimators_france,
+  "./tables/estimators_france.xlsx"
+)
