@@ -94,7 +94,13 @@ for (death_year in death_years_germany) {
       mle_shape <- as.numeric(estimators_women[2])
       est_endpoint_d <- endpoint_estimator(threshold, mle_scale, mle_shape)
       est_endpoint_Y <- est_endpoint_d / 365
-      t <- c(est_endpoint_d - 365, est_endpoint_d - 273, est_endpoint_d - 181, est_endpoint_d - 90, est_endpoint_d - 1)
+      t <- c(
+        est_endpoint_d - 365,
+        est_endpoint_d - 273,
+        est_endpoint_d - 181,
+        est_endpoint_d - 90,
+        est_endpoint_d - 1
+      )
       direct_hazard <- einmahl_direct_hazard(mle_shape, est_endpoint_d, t)
       mean_residual_life_d <- mean_res_life(mle_shape, mle_scale, threshold, threshold)
       mean_residual_life_Y <- mean_residual_life_d / 365
