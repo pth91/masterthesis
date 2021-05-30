@@ -1,5 +1,3 @@
-# TODO: man hat hier als land auch immernoch den `.`, das sollte man auf jeden
-# fall nochmal erwaehnen
 source("../../helper/package_check.R")
 source("../../helper/data.R")
 load_idl_complete()

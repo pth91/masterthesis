@@ -1,4 +1,5 @@
 source("../../helper/package_check.R")
+print("This will take a moment to complete")
 source("./tex_plot_reverse_weibull.R", encoding = "UTF-8")
 source("./tex_plot_frechet.R", encoding = "UTF-8")
 source("./tex_plot_gpd.R", encoding = "UTF-8")

@@ -115,7 +115,7 @@ for (country in countries) {
   ggsave(
     plot = arranged_qq_plot,
     file = paste0(
-      "./figures/no_gender/qq_",
+      "./figures/no_yod/qq_",
       country,
       "_arranged.png"
     ),
